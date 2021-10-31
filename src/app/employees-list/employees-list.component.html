@@ -1,0 +1,184 @@
+ 
+ <div class="search-div">
+
+  <div *ngIf="alert" class="alert alert-warning alert-dismissble fade show" role="alert">
+
+   <strong>Warning !!</strong> You can not delete this department it has employees !
+   <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  </div>
+  <button type="submit" (click)="addNewDepartment()" class="btn btn-sm btn-info">
+    Add department
+  </button>
+</div>
+<table class="content-table ">
+  <thead>
+    <tr>
+      <th>Department Id</th>
+      <th>Department Name</th>
+      <th>Manager Id</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let listOfdepartment of departments" (click)="currentDepartment(listOfdepartment)"
+      [ngClass]="{'active-row' : listOfdepartment.departmentId == selectedDeparmentRow}">
+      <td><span>{{ listOfdepartment.departmentId }}</span></td>
+      <td> <span>{{ listOfdepartment.departmentName }}</span></td>
+      <td> <span>{{ listOfdepartment.managerId }}</span></td>
+      <td class="pt-14 m-5">
+        <div class="btn-group ml-2 mr-2">
+          <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#formPopup"
+            (click)="editDepartment(listOfdepartment)">
+            <li class="fas fa-edit"></li>Edit
+          </button>
+        </div>
+        <div class="btn-group ml-2">
+          <button class="btn btn-sm btn-danger" (click)="deleteDepartment(listOfdepartment.departmentId)">
+            <li class="fa fa-remove"></li>Delete
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+  <div class="search-div">
+
+    <button type="submit" (click)="addNewEmployee(selectedDeparmentRow)" class="btn btn-sm btn-info">
+      Add Employee
+    </button>
+  </div>
+  <table class="content-table ">
+    <thead>
+      <tr>
+        <th>Employee Id</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Salary</th>
+        <th>Phone number</th>
+        <th>Hire Date</th>
+        <th>Manager Name</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let listOfemployees of employees" (click)="currentEmployee(listOfemployees)"
+        [ngClass]="{'active-row' : listOfemployees.employeeId == selectedRowId}">
+        <td><span>{{ listOfemployees.employeeId }}</span></td>
+        <td> <span>{{ listOfemployees.firstName }}</span></td>
+        <td> <span>{{ listOfemployees.lastName }}</span></td>
+        <td><span>{{ listOfemployees.phoneNumber }}</span></td>
+        <td><span>{{ listOfemployees.hireDate }}</span></td>
+        <td><span>{{ listOfemployees.salary }}</span></td>
+        <td><span>{{ listOfemployees.managerId }}</span></td>
+        <td class="pt-14 m-5">
+          <div class="btn-group ml-2 mr-2">
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#formPopup"
+              (click)="edit(listOfemployees)">
+              <li class="fas fa-edit"></li>Edit
+            </button>
+          </div>
+          <div class="btn-group ml-2">
+            <button class="btn btn-sm btn-danger" (click)="deleteEmployee(listOfemployees.employeeId)">
+              <li class="fa fa-remove"></li>Delete
+            </button>
+          </div> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  
+    <!-- Modal class="modal fade" for departments-->
+    <div class="modal fade" id="departmentform" #myModal role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Department</h5>
+          <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" (click)="close()"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #updateDeptForm="ngForm" (ngSubmit)="departmentToUpdate.departmentId > 0 ? 
+            updateDepartment(departmentToUpdate.departmentId) : saveNewDepartment(updateDeptForm)">
+            <div class="form-group">
+              <label for="name">Department Name :</label>
+              <input type="text" required #departmentName [(ngModel)]="departmentToUpdate.departmentName" name="departmentName" id="dName"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <input type="submit" value="Save Changes" class="btn btn-primary w-100" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-secondary" (click)="close()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Modal class="modal fade for employees"-->
+    <div class="modal fade" id="employeeform" #myEmpModal role="dialog" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Employee</h5>
+          <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" (click)="closeEmpPopup()"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #updateEmpForm="ngForm"  (ngSubmit)="saveNewEmployee(updateEmpForm)">
+            <div class="form-group">
+              <label for="name">First Name :</label>
+              <input type="text" formControlName="firstName" required #firstName [(ngModel)]="employeeToUpdate.firstName" name="firstName" id="fname"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="name">Last Name :</label>
+              <input type="text" #lastName [(ngModel)]="employeeToUpdate.lastName" name="lastName" id="lname"
+                class="form-control" />
+                <!-- <small *ngIf="exForm.get('firstName').invalid && exForm.get('firstName').touched" class="text-danger"> First name is required</small> -->
+            </div>
+            <div class="form-group">
+              <label for="name">Salary :</label>
+              <input type="number" formControlName="salary" required #salary [(ngModel)]="employeeToUpdate.salary" name="salary" id="sal"
+                class="form-control" />
+                <!-- <small *ngIf="exForm.get('salary').invalid && exForm.get('salary').touched" class="text-danger"> Salary must greater than zero</small> -->
+            </div>
+            <div class="form-group">
+              <label for="name">Phone number :</label>
+              <input type="text" #phoneNumber [(ngModel)]="employeeToUpdate.phoneNumber" name="phoneNumber" id="phone"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="name">Manager Id :</label>
+              <input type="text" #managerId [(ngModel)]="employeeToUpdate.managerId" name="managerId" id="manager"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="name">Hire date:</label>
+              <input type="date" #hireDate [(ngModel)]="employeeToUpdate.hireDate" name="hireDate" id="hire"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <input type="hidden" #departmentId [(ngModel)]="selectedDeparmentRow" name="departmentId" id="hire"
+                class="form-control" />
+            </div>
+            <div class="form-group">
+              <input type="submit" value="Save Changes" class="btn btn-primary w-100" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-secondary" (click)="closeEmpPopup()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
